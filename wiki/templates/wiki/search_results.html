@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Hasil Pencarian</h2>
+<form method="get" action="{% url 'search_writeups' %}" class="ui form">
+    <div class="field">
+        <input type="text" name="q" placeholder="Cari judul..." value="{{ query|default:'' }}">
+    </div>
+    <div class="field">
+        <select name="tag" class="ui dropdown">
+            <option value="">Semua Tag</option>
+            {% for tag in tags %}
+                <option value="{{ tag.name }}" {% if tag.name == selected_tag %}selected{% endif %}>{{ tag.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="ui button primary">Cari</button>
+</form>
+
+{% if query or selected_tag %}
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Judul & Tags</th>
+                <th>Owner</th>
+                <th>Visibilitas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for writeup in writeups %}
+            <tr>
+                <td>
+                    <a href="{% url 'writeup_detail' writeup.pk %}">{{ writeup.title }}</a>
+                    <div class="ui mini labels" style="margin-top: 0.5em;">
+                        {% for tag in writeup.tags.all %}
+                            <span class="ui label">{{ tag.name }}</span>
+                        {% empty %}
+                            <!-- Jika tidak ada tag, tidak tampil apa-apa -->
+                        {% endfor %}
+                    </div>
+                </td>
+                <td>{{ writeup.owner.username }}</td>
+                <td>{{ writeup.is_public|yesno:"Public,Private" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">Tidak ada hasil yang ditemukan.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+<h3>Tags</h3>
+<ul>
+    {% for tag, count in tag_counts.items %}
+        <li>{{ tag }} ({{ count }})</li>
+    {% endfor %}
+</ul>
+{% endblock %}

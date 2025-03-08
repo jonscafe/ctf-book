@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Hapus Writeup</h2>
+<p>Apakah Anda yakin ingin menghapus writeup "{{ writeup.title }}"?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="ui button red">Hapus</button>
+    <a class="ui button" href="{% url 'writeup_detail' writeup.pk %}">Batal</a>
+</form>
+{% endblock %}

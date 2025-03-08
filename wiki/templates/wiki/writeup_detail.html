@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load markdown_extras %}
+
+{% block content %}
+<h2>{{ writeup.title }}</h2>
+<div class="ui labels" style="margin-bottom: 1em;">
+    {% for tag in writeup.tags.all %}
+        <a class="ui label">{{ tag.name }}</a>
+    {% endfor %}
+</div>
+<div>
+    <em>Oleh {{ writeup.owner.username }} | {{ writeup.updated_at }}</em>
+</div>
+<div class="ui segment">
+    {{ writeup.content|markdown_format|safe }}
+</div>
+{% if user == writeup.owner %}
+    <a class="ui button" href="{% url 'writeup_edit' writeup.pk %}">Edit</a>
+    <a class="ui button" href="{% url 'toggle_visibility' writeup.pk %}">
+        {% if writeup.is_public %} Jadikan Private {% else %} Jadikan Public {% endif %}
+    </a>
+    <form method="post" action="{% url 'writeup_delete' writeup.pk %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="ui button red">Delete</button>
+    </form>
+    <h4>Histori Versi:</h4>
+    <ul>
+        {% for version in writeup.versions.all %}
+            <li>
+                {{ version.updated_at }} - 
+                <a href="{% url 'rollback_writeup' writeup.pk version.pk %}">Rollback ke versi ini</a>
+            </li>
+        {% empty %}
+            <li>Tidak ada histori.</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}
