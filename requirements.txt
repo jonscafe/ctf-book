@@ -4,3 +4,4 @@ psycopg2
 markdown2
 pygments
 django-taggit
+xhtml2pdf
