@@ -28,7 +28,7 @@ To deploy this project, follow these steps:
     docker-compose exec web python manage.py collectstatic
     ```
 
-5. Access the application at `http://localhost:8000`.
+5. Access the application at `http://localhost:9111`.
 
 ## Database Migration
 
