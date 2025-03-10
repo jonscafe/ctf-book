@@ -5,3 +5,4 @@ markdown2
 pygments
 django-taggit
 xhtml2pdf
+gevent>=1.4

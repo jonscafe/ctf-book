@@ -1,13 +1,15 @@
 services:
   web:
     build: .
-    command: gunicorn ctfwiki.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn ctfwiki.wsgi:application --bind 0.0.0.0:9111 --workers 3 --worker-class gevent --timeout 120
     volumes:
       - .:/app
+      - ./static:/app/static
     ports:
-      - "8000:8000"
+      - "9111:9111"
     depends_on:
       - db
+    restart: always  # Agar otomatis restart jika crash
 
   db:
     image: postgres:13
