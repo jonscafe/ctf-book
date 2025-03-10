@@ -4,8 +4,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'ganti-dengan-secret-key-anda'
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+DEBUG = False  # Set to False for production
+ALLOWED_HOSTS = ['*']  # Update with your domain or IP
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -34,7 +34,7 @@ ROOT_URLCONF = 'ctfwiki.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'wiki' / 'templates'],
+        'DIRS': [BASE_DIR / 'wiki' / 'templates', BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,5 +75,6 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 LOGOUT_REDIRECT_URL = '/'
