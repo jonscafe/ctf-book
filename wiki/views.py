@@ -1,11 +1,21 @@
+import os
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, authenticate, update_session_auth_hash
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.template.loader import get_template
+from django.conf import settings
+from django.templatetags.static import static
+from django.utils.html import escape
+from django.core.files.storage import default_storage
 from .models import Writeup, WriteupVersion
+from .forms import UserUpdateForm
 from django import forms
 import markdown2
 from taggit.models import Tag
+from xhtml2pdf import pisa
 
 # Form untuk Writeup
 class WriteupForm(forms.ModelForm):
@@ -103,3 +113,63 @@ def search_writeups(request):
     tags = Tag.objects.all()
     tag_counts = {tag.name: Writeup.objects.filter(tags__name__in=[tag.name]).count() for tag in tags}
     return render(request, 'wiki/search_results.html', {'writeups': writeups, 'tags': tags, 'query': query, 'selected_tag': tag, 'tag_counts': tag_counts})
+
+@login_required
+def update_account(request):
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        if user_form.is_valid():
+            user_form.save()
+            return redirect('update_account')
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+    return render(request, 'wiki/update_account.html', {'user_form': user_form})
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        password_form = PasswordChangeForm(user=request.user, data=request.POST)
+        if password_form.is_valid():
+            user = password_form.save()
+            update_session_auth_hash(request, user)  # Important!
+            return redirect('update_account')
+    else:
+        password_form = PasswordChangeForm(user=request.user)
+    return render(request, 'wiki/change_password.html', {'password_form': password_form})
+
+@login_required
+def user_profile(request, username):
+    user = get_object_or_404(User, username=username)
+    writeups = Writeup.objects.filter(owner=user)
+    return render(request, 'wiki/user_profile.html', {'profile_user': user, 'writeups': writeups})
+
+@login_required
+def export_writeup_pdf(request, pk):
+    writeup = get_object_or_404(Writeup, pk=pk)
+    if not writeup.is_public and writeup.owner != request.user:
+        return redirect('writeup_list')
+    
+    template_path = 'wiki/writeup_pdf.html'
+    context = {'writeup': writeup}
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{escape(writeup.title)}.pdf"'
+    
+    template = get_template(template_path)
+    html = template.render(context)
+    
+    # Handle static files
+    def link_callback(uri, rel):
+        if uri.startswith(settings.MEDIA_URL):
+            path = os.path.join(settings.MEDIA_ROOT, uri.replace(settings.MEDIA_URL, ""))
+        elif uri.startswith(settings.STATIC_URL):
+            path = os.path.join(settings.STATIC_ROOT, uri.replace(settings.STATIC_URL, ""))
+        else:
+            return uri
+        if not os.path.isfile(path):
+            raise Exception(f'Media URI must start with {settings.STATIC_URL} or {settings.MEDIA_URL}')
+        return path
+
+    pisa_status = pisa.CreatePDF(html, dest=response, link_callback=link_callback)
+    if pisa_status.err:
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response

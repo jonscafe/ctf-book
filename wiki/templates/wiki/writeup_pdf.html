@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ writeup.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .tags {
+            margin-top: 10px;
+        }
+        .tags span {
+            display: inline-block;
+            background-color: #f0f0f0;
+            padding: 5px;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ writeup.title }}</h1>
+    <p><em>Oleh {{ writeup.owner.username }} | {{ writeup.updated_at }}</em></p>
+    <div class="content">
+        {% load markdown_extras %}
+        {{ writeup.content|markdown_format|safe }}
+    </div>
+    <div class="tags">
+        {% for tag in writeup.tags.all %}
+            <span>{{ tag.name }}</span>
+        {% endfor %}
+    </div>
+</body>
+</html>

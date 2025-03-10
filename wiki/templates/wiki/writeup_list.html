@@ -23,7 +23,7 @@
                     {% endfor %}
                 </div>
             </td>
-            <td>{{ writeup.owner.username }}</td>
+            <td><a href="{% url 'user_profile' writeup.owner.username %}">{{ writeup.owner.username }}</a></td>
             <td>{{ writeup.is_public|yesno:"Public,Private" }}</td>
         </tr>
         {% empty %}

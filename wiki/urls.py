@@ -11,4 +11,8 @@ urlpatterns = [
     path('writeup/<int:pk>/rollback/<int:version_id>/', views.rollback_writeup, name='rollback_writeup'),
     path('writeup/<int:pk>/delete/', views.writeup_delete, name='writeup_delete'),
     path('search/', views.search_writeups, name='search_writeups'),
+    path('account/', views.update_account, name='update_account'),
+    path('account/password/', views.change_password, name='change_password'),
+    path('profile/<str:username>/', views.user_profile, name='user_profile'),
+    path('writeup/<int:pk>/export/', views.export_writeup_pdf, name='export_writeup_pdf'),
 ]

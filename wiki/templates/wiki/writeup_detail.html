@@ -35,4 +35,5 @@
         {% endfor %}
     </ul>
 {% endif %}
+<a class="ui button" href="{% url 'export_writeup_pdf' writeup.pk %}">Export as PDF</a>
 {% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="ui segment">
+    <h2>Update Account</h2>
+    <form method="post" class="ui form">
+        {% csrf_token %}
+        {{ user_form.as_p }}
+        <button class="ui primary button" type="submit">Update</button>
+    </form>
+    <a class="ui button" href="{% url 'change_password' %}">Change Password</a>
+</div>
+{% endblock %}

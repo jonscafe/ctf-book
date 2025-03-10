@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="ui segment">
+    <h2>Profile of {{ profile_user.username }}</h2>
+    <h3>Writeups</h3>
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Judul & Tags</th>
+                <th>Owner</th>
+                <th>Visibilitas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for writeup in writeups %}
+            <tr>
+                <td>
+                    <a href="{% url 'writeup_detail' writeup.pk %}">{{ writeup.title }}</a>
+                    <div class="ui mini labels" style="margin-top: 0.5em;">
+                        {% for tag in writeup.tags.all %}
+                            <span class="ui label">{{ tag.name }}</span>
+                        {% empty %}
+                            <!-- Jika tidak ada tag, tidak tampil apa-apa -->
+                        {% endfor %}
+                    </div>
+                </td>
+                <td>{{ writeup.owner.username }}</td>
+                <td>{{ writeup.is_public|yesno:"Public,Private" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">Belum ada writeup.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
