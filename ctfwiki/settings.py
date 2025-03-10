@@ -4,8 +4,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'ganti-dengan-secret-key-anda'
-DEBUG = False  # Set to False for production
-ALLOWED_HOSTS = ['*']  # Update with your domain or IP
+DEBUG = True # Ubah ke False saat di production
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -75,6 +75,5 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = '/app/static/'
 LOGOUT_REDIRECT_URL = '/'
