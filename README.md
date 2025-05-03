@@ -4,6 +4,9 @@ This project is a web application built using Django. It includes a wiki module 
 The CTF Book web application is a Capture The Flag (CTF) writeup management system. It allows users to create, manage, and share writeups for various CTF challenges. The application provides a structured way to document solutions and strategies used to solve CTF challenges, making it easier for users to reference and learn from past experiences.
 
 ## Deployment
+Initialize the project before deploying it by running init.sh
+```chmod +x init.sh```
+```./init.sh```
 
 To deploy this project, follow these steps:
 
